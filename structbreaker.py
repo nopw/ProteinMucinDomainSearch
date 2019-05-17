@@ -307,8 +307,8 @@ for db in dbs:
         if sssss != str(seq.seq):
             print(sssss)
             print(str(seq.seq))
-        if seq.id == 'tr|A0A182G5J9|A0A182G5J9_AEDAL':
-            c = 1
+#        if seq.id == 'tr|A0A182G5J9|A0A182G5J9_AEDAL':
+#            c = 1
         mergedomainlist = mergedomainbycondition(spliteddomainlist, 0.658)
         i = 0
         positiondomainstart = 0

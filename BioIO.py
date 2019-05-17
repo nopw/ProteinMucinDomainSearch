@@ -31,8 +31,8 @@ for db in databases:
         p = 0
         p = seq_record.seq.count('P')
         stl = (s+t)/seqlen
-        pl = p*1000/seqlen
-        if s+t > seqlen/4 and p> seqlen/1000:
+        pl = p/seqlen
+        if (s + t)/seqlen > 0.16 and (p/seqlen) > 0.1:
             line = {r'SeqID':seq_record.id,
                     r'S':s,
                     r'T':t,

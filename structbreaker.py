@@ -318,6 +318,8 @@ for db in dbs:
             positiondomainstart = positiondomainend
             positiondomainend = positiondomainstart + len(ldomain.domainseq)
 
+            if len(ldomain.domainseq) / len(str(seq.seq)) <0.3333333333333333333:
+                ldomain.domainkind = ldmkd.kindcs
             if ldomain.domainkind == ldmkd.kindcs:
                 seqdiv = seqdiv + getmarkedds(ldomain)
             else:

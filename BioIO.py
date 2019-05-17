@@ -17,6 +17,7 @@ if (not databases):# or databases.count ==0 or em):
    input("未找到目标数据,按回车退出")
    os._exit(0)
 print(r'目标数据库'+ str(databases))
+resultcount = 0
 for db in databases:
     results = []
     compare = []
@@ -33,6 +34,7 @@ for db in databases:
         stl = (s+t)/seqlen
         pl = p/seqlen
         if (s + t)/seqlen > 0.16 and (p/seqlen) > 0.1:
+            resultcount += 1
             line = {r'SeqID':seq_record.id,
                     r'S':s,
                     r'T':t,
@@ -51,4 +53,5 @@ for db in databases:
       for aline in jsObj:
         fileObject.write(aline)
       fileObject.close()
+print('total seq count:'+str( resultcount))
 input("操作完成,按回车退出")

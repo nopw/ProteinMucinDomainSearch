@@ -207,7 +207,7 @@ def mergedomainbycondition(splitedsequencelist, minpercent, minlength=40):
                 lastmerge = 0
                 continue
             if getseqptspercent(newdomain) < minpercent:
-                if len(seq.domainseq)>40:
+                if len(seq.domainseq) > minlength:
                     oRet.append(seq)
                     i = i + 1
                     lastmerge = 0
@@ -222,7 +222,7 @@ def mergedomainbycondition(splitedsequencelist, minpercent, minlength=40):
                         continue
                     else:
                         #否则不拼接
-                        if len(seq.domainseq)>40:
+                        if len(seq.domainseq)> minlength:
                             seq.domainkind = ldomainkind.kindds
                         else:
                             seq.domainkind = ldomainkind.kindcs

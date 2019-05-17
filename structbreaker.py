@@ -100,7 +100,7 @@ def splitseqtodomain(sequence):
 
     # position = 0
     adjustmultiple = 1
-    defaultlength = 12
+    defaultlength = 8
     sequencelength = len(sequence.seq)
     sumpts = 0
     ptspercent = 0.60
@@ -309,7 +309,7 @@ for db in dbs:
             print(str(seq.seq))
         if seq.id == 'tr|A0A182G5J9|A0A182G5J9_AEDAL':
             c = 1
-        mergedomainlist = mergedomainbycondition(spliteddomainlist, 0.58)
+        mergedomainlist = mergedomainbycondition(spliteddomainlist, 0.658)
         i = 0
         positiondomainstart = 0
         positiondomainend = 1
@@ -318,8 +318,8 @@ for db in dbs:
             positiondomainstart = positiondomainend
             positiondomainend = positiondomainstart + len(ldomain.domainseq)
 
-            if len(ldomain.domainseq) / len(str(seq.seq)) <0.3333333333333333333:
-                ldomain.domainkind = ldmkd.kindcs
+#            if len(ldomain.domainseq) / len(str(seq.seq)) <0.3333333333333333333:
+#                ldomain.domainkind = ldmkd.kindcs
             if ldomain.domainkind == ldmkd.kindcs:
                 seqdiv = seqdiv + getmarkedds(ldomain)
             else:

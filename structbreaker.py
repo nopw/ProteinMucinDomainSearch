@@ -288,11 +288,17 @@ for db in dbs:
     filehandle = path + db
     outputfilecontent = r'<!DOCTYPE html><html><head><style>#dsbackground{background-color:yellow;font-weight:bold;}#MYPTS{backgroud-color:#000000; color :blue;font-weight:bold;} .tooltip:hover:after { content: attr(data-tooltip);} .nowrap{white-space:nowrap;}</style></head><body>'
     num = 1
+    oldid = ''
     for seq in SeqIO.parse(filehandle, 'fasta'):
         start = datetime.now()
         dropseq = 1
         seqdiv = ''
-
+        #skip same seq
+        newid = str(seq.id).split('-')[0]
+        if None != oldid:
+            if oldid == newid:
+                continue
+        oldid = newid
         loopsummaryinfo = summaryinfo(str(seq.seq))
 
         ltooltipcontent = '[sum(PTS):{0}, sequence length:{1},percent of PTS in sequence:{2}]'.format(

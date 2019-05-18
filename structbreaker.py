@@ -4,6 +4,7 @@ import Bio.SeqRecord as SeqRecord
 import Bio.SeqUtils as SeqUtils
 import os
 from datetime import datetime
+from domaintopng import domainpositonkind, drawdomain
 
 
 # this is for static variable,which python do not surport.use classname.property
@@ -345,3 +346,4 @@ for db in dbs:
         '%Y-%m-%d %X') + '</p></div>' + outputfilecontent + r'<div><p>finish:' + finish.strftime(
         '%Y-%m-%d %X') + '</p></div>' + r'</body></html>'
     save_to_file(path + db.replace('fasta', 'html'), outputfilecontent)
+

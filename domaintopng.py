@@ -9,20 +9,16 @@ class domainpositonkind:
         self.start = positionstart
         self.end = positionend
         self.kind =domainkind
-def saveImg():
-    global canvas
-    path = os.path.abspath(os.curdir) + '\\'
-    canvas.postscript(file=path+"duck.eps", colormode='color')
-    imgNew = Image.open(path+"duck.eps")
-    imgNew.convert("RGBA")
-    imgNew.thumbnail((2000, 2000), Image.ANTIALIAS)
-    imgNew.save(path+'testImg.png', quality=90)
 
 
 def drawdomain(domanlist):
-    scrwidth = 400
+    scrwidth = 24*24
+    for dk in domanlist:
+        scrwidth += dk.end - dk.start
     #todo 计算画布宽度
     turtle.setup(scrwidth, 140, None, None)
+    turtle.clear()
+#    turtle.reset()
     turtle.pensize(1)
     turtle.hideturtle()
     height = 1
@@ -52,26 +48,32 @@ def drawdomain(domanlist):
     try:
         imgNew = Image.open(path + "duck.eps")
         imgNew.convert("RGBA")
-        imgNew.thumbnail((1000, 200), Image.ANTIALIAS)
+        imgNew.thumbnail((scrwidth, 140), Image.ANTIALIAS)
         imgNew.save(path + 'testImg.png', quality=70)
     except Exception as e:
         print(e)
     pass
-#    turtle.done()
-    turtle.bye()
+ #   turtle.bye()
 
 if __name__ == '__main__':
-    adk = domainpositonkind(1,30,1)
-    cdk = domainpositonkind(45,80,2)
-    ddk = domainpositonkind(90,120,1)
-    edk = domainpositonkind(120,130,1)
-    fdk = domainpositonkind(135,180,2)
-    c = []
-    c.append(adk)
-    c.append(cdk)
-    c.append(ddk)
-    c.append(edk)
-    c.append(fdk)
-    drawdomain(c)
-    #saveImg()
+    cc = 0
+    while (cc<20):
+        adk = domainpositonkind(1,30,1)
+        cdk = domainpositonkind(45,80,2)
+        ddk = domainpositonkind(90,120,1)
+        edk = domainpositonkind(120,130,1)
+        fdk = domainpositonkind(135,180,2)
+        gdk = domainpositonkind(185,200,1)
+        hdk = domainpositonkind(205,250,2)
+        c = []
+        c.append(adk)
+        c.append(cdk)
+        c.append(ddk)
+        c.append(edk)
+        c.append(fdk)
+        c.append(gdk)
+        c.append(hdk)
+        drawdomain(c)
+        cc= cc+1
+    turtle.bye()
 

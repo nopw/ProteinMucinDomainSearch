@@ -35,15 +35,15 @@ for db in databases:
         p = seq_record.seq.count('P')
         stl = (s+t)/seqlen
         pl = p/seqlen
-        if s/seqlen > 0.08 and t/seqlen > 0.07 and (p/seqlen) > 0.09:
+        if (s + t)/seqlen > 0.15: #and (p/seqlen) > 0.05:
             resultcount += 1
             line = {r'SeqID':seq_record.id,
                     r'S':s,
                     r'T':t,
-                    r'P':p,
+               #     r'P':p,
                     r'seqlen':seqlen,
-                    r"S+T/seqlen":stl,
-                    r'P/seqlen/1000':pl
+                    r"S+T/seqlen":stl
+               #     r'P/seqlen/1000':pl
                     }
             print(line)
             compare.append(line);

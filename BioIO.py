@@ -22,8 +22,6 @@ for db in databases:
     results = []
     compare = []
     for seq_record in SeqIO.parse(path+'\\'+ db ,"fasta"):
-        if(str(seq_record.id).__contains__('AAEL004798')):
-            sdfasdfasdfs=1
         seqlen =len(seq_record.seq)
         if seqlen <= 100:
             continue

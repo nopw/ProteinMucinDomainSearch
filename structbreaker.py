@@ -146,19 +146,16 @@ def getppercent(sequences):
     return retValue
 
 
-r'''def getseqptspercent(sequences):
+def getseqptspercent(sequences):
     i = 0
     sumpts = 0
     retValue = 0.0
     if sequences.domainseq == '':
         return 0
-    for s in sequences.domainseq:
-        i = i + 1
-        if (s == 'S' or s == 'P' or s == 'T'):
-            sumpts = sumpts + 1
-    retValue = sumpts / i
+    sumpts = sequences.domainseq.count('P') + sequences.domainseq.count('T') + sequences.domainseq.count('S')
+    retValue = sumpts / len(sequences.domainseq)
     return retValue
-'''
+
 
 def splicedomain(lastdomain, splitedsequencelist, index):
     i = 0
@@ -169,8 +166,9 @@ def splicedomain(lastdomain, splitedsequencelist, index):
 
 
 def mergedomainbycondition(splitedsequencelist,  minlength=40):
-    tspercent = 0.4
+    tspercent = 0.40
     ppercent = 0.05
+    ptspercent = 0.65
     oRet = []
     s = splitedsequencelist
     i = 0
@@ -189,7 +187,7 @@ def mergedomainbycondition(splitedsequencelist,  minlength=40):
 #            continue
         # if ptspercent less than min limit
         # 如果pts占比低于设定下限
-        if getseqtspercent(seq) <= tspercent or getppercent(seq) <= ppercent:
+        if getseqtspercent(seq) <= tspercent or getppercent(seq) <= ppercent or getseqptspercent(seq) <= ptspercent:
             # will not merge first cs
             if i == 0 and seq.domainkind == ldomainkind.kindcs:
                 seq.domainkind = ldomainkind.kindcs
@@ -207,23 +205,30 @@ def mergedomainbycondition(splitedsequencelist,  minlength=40):
                 i = i + 1
                 lastmerge = 0
                 continue
-            if getseqtspercent(newdomain) <= tspercent or getppercent(newdomain) <= ppercent:
+            if getseqtspercent(newdomain) <= tspercent or getppercent(newdomain) <= ppercent or getseqptspercent(newdomain) <= ptspercent:
                 seq.domainkind = ldomainkind.kindcs
                 oRet.append(seq)
                 i = i + 1
                 lastmerge = 0
                 continue
             else:
-                if getseqtspercent(seq) > tspercent and getppercent(seq) > ppercent:
-                    newdomain.domainkind = ldomainkind.kindds
-                    oRet.append(newdomain)
-                    i = i + 1
-                    lastmerge = 1
-                    continue
-        # else try to splice a bigger ds
+                if getseqtspercent(newdomain) > tspercent and getppercent(newdomain) > ppercent and getseqptspercent(newdomain) > ptspercent:
+                    if len(newdomain.domainseq) >= minlength:
+                        newdomain.domainkind = ldomainkind.kindds
+                        oRet.append(newdomain)
+                        i = i + 1
+                        lastmerge = 1
+                        continue
+                    else:
+                        seq.domainkind = ldomainkind.kindcs
+                        oRet.append(seq)
+                        i = i + 1
+                        lastmerge = 0
+                        continue
+        # else try to splice ds
         # 否则尝试拼接更长长度的ds
         else:
-            if getseqtspercent(seq) > tspercent and getppercent(seq) > ppercent:
+            if getseqtspercent(seq) > tspercent and getppercent(seq) > ppercent and getseqptspercent(seq) > ptspercent:
                 if i < len(splitedsequencelist) - 1:
                     newdomain = splicedomain(seq, splitedsequencelist, i + 1)
                 else:
@@ -232,7 +237,7 @@ def mergedomainbycondition(splitedsequencelist,  minlength=40):
                     i = i + 1
                     lastmerge = 0
                     continue
-                if getseqtspercent(newdomain) <= tspercent or getppercent(newdomain) <= ppercent:
+                if getseqtspercent(newdomain) <= tspercent or getppercent(newdomain) <= ppercent or getseqptspercent(newdomain) <= ptspercent:
                     if len(seq.domainseq) > minlength:
                         oRet.append(seq)
                         i = i + 1
@@ -240,7 +245,7 @@ def mergedomainbycondition(splitedsequencelist,  minlength=40):
                         continue
                     else:
                         #如果拼接后PTS含量增多或保持不变则拼接有效
-                        if getseqtspercent(seq) <= getseqtspercent(newdomain) or getppercent(seq) <= getppercent(newdomain):
+                        if getseqtspercent(seq) <= getseqtspercent(newdomain) and getppercent(seq) <= getppercent(newdomain) and getseqptspercent(seq)<= getseqptspercent(newdomain):# and len(newdomain.domainseq) >= minlength:
                             newdomain.domainkind = ldomainkind.kindds
                             oRet.append(newdomain)
                             i = i + 1
@@ -257,11 +262,17 @@ def mergedomainbycondition(splitedsequencelist,  minlength=40):
                             lastmerge = 0
                             continue
                 else:
-                    if getseqtspercent(newdomain) > tspercent and getppercent(newdomain) > ppercent:
+                    if getseqtspercent(newdomain) > tspercent and getppercent(newdomain) > ppercent and getseqptspercent(newdomain) > ptspercent:# and len(newdomain.domainseq) >= minlength:
                         newdomain.domainkind = ldomainkind.kindds
                         oRet.append(newdomain)
                         lastmerge = 1
                         i = i + 1
+                    else:
+                        seq.domainkind = ldomainkind.kindcs
+                        oRet.append(seq)
+                        i = i + 1
+                        lastmerge = 0
+                        continue
     return oRet
 
 
@@ -318,7 +329,7 @@ for db in dbs:
     num = 1
     oldid = ''
     for seq in SeqIO.parse(filehandle, 'fasta'):
-        print(seq.id)
+        #print(seq.id)
         start = datetime.now()
         dropseq = 1
         seqdiv = ''
@@ -353,13 +364,9 @@ for db in dbs:
             positiondomainstart = positiondomainend
             positiondomainend = positiondomainstart + len(ldomain.domainseq)
 
-#            if len(ldomain.domainseq) / len(str(seq.seq)) <0.3333333333333333333:
-#                ldomain.domainkind = ldmkd.kindcs
             if ldomain.domainkind == ldmkd.kindcs:
                 seqdiv = seqdiv + getmarkedds(ldomain)
             else:
-                totalseqcount += 1
-                print(totalseqcount)
                 ssummaryinfo = summaryinfo(ldomain.domainseq)
                 tooltipcontent = '[sum(PTS):{0}, domain length:{1},percent of PTS in domain:{2},domainposition[{3}:{4}]]'.format(
                     ssummaryinfo.ptscount, ssummaryinfo.count, ssummaryinfo.ptspercent, positiondomainstart,

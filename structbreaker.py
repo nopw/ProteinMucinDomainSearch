@@ -1,10 +1,10 @@
-import Bio
 import Bio.SeqIO as SeqIO
-import Bio.SeqRecord as SeqRecord
-import Bio.SeqUtils as SeqUtils
 import os
 from datetime import datetime
-from domaintopng import domainpositonkind, drawdomain
+import sys
+if sys.argv.count('drawimg') > 0:
+    from domaintopng import domainpositonkind, drawdomain
+    print('imgmodule imported')
 
 
 # this is for static variable,which python do not surport.use classname.property

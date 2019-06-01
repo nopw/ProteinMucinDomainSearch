@@ -186,7 +186,6 @@ def mergedomainbycondition(splitedsequencelist,  minlength=40):
 #            lastmerge = 0
 #            continue
         # if ptspercent less than min limit
-        # 如果pts占比低于设定下限
         if getseqtspercent(seq) <= tspercent or getppercent(seq) <= ppercent or getseqptspercent(seq) <= ptspercent:
             # will not merge first cs
             if i == 0 and seq.domainkind == ldomainkind.kindcs:
@@ -196,7 +195,6 @@ def mergedomainbycondition(splitedsequencelist,  minlength=40):
                 i = i + 1
                 continue
             # try splice next domain, if ptspercent after splice less than min limit, this domain is cs
-            # 尝试与下一片段拼接,如果拼接后的pts占比仍低于设定下限,此为cs
             if i < len(splitedsequencelist) - 1:
                 newdomain = splicedomain(seq, splitedsequencelist, i)
             else:
@@ -226,7 +224,6 @@ def mergedomainbycondition(splitedsequencelist,  minlength=40):
                         lastmerge = 0
                         continue
         # else try to splice ds
-        # 否则尝试拼接更长长度的ds
         else:
             if getseqtspercent(seq) > tspercent and getppercent(seq) > ppercent and getseqptspercent(seq) > ptspercent:
                 if i < len(splitedsequencelist) - 1:
@@ -244,7 +241,6 @@ def mergedomainbycondition(splitedsequencelist,  minlength=40):
                         lastmerge = 0
                         continue
                     else:
-                        #如果拼接后PTS含量增多或保持不变则拼接有效
                         if getseqtspercent(seq) <= getseqtspercent(newdomain) and getppercent(seq) <= getppercent(newdomain) and getseqptspercent(seq)<= getseqptspercent(newdomain):# and len(newdomain.domainseq) >= minlength:
                             newdomain.domainkind = ldomainkind.kindds
                             oRet.append(newdomain)
@@ -252,7 +248,6 @@ def mergedomainbycondition(splitedsequencelist,  minlength=40):
                             lastmerge = 1
                             continue
                         else:
-                            #否则不拼接
                             if len(seq.domainseq) > minlength:
                                 seq.domainkind = ldomainkind.kindds
                             else:
@@ -316,7 +311,7 @@ dbs = []
 ldmkd = domainkind()
 files = os.listdir(path)
 for f in files:
-    if (str(f).endswith('fasta')):
+    if (str(f).endswith('fasta') and f.count('possible')==0):
         dbs.append(f)
 if (None == dbs or dbs.count == 0):
     print('0 database found. program ends. press enter to exit')
@@ -328,6 +323,7 @@ for db in dbs:
     outputfilecontent = r'<!DOCTYPE html><html><head><style>#dsbackground{background-color:yellow;font-weight:bold;}#MYPTS{backgroud-color:#000000; color :blue;font-weight:bold;} .tooltip:hover:after { content: attr(data-tooltip);} .nowrap{white-space:nowrap;}</style></head><body>'
     num = 1
     oldid = ''
+    fastaoutput=[]
     for seq in SeqIO.parse(filehandle, 'fasta'):
         #print(seq.id)
         start = datetime.now()
@@ -377,10 +373,14 @@ for db in dbs:
         seqdiv = seqdiv + r'</p></div>'
         if dropseq == 0:
             outputfilecontent = outputfilecontent + seqdiv
+            fastaoutput.append(seq)
             num = num + 1
         finish = datetime.now()
+    if fastaoutput:
+        SeqIO.write(fastaoutput, path + '\\possible_mucin_' + db, "fasta")
     outputfilecontent = r'<div><p>start:' + start.strftime(
         '%Y-%m-%d %X') + '</p></div>' + outputfilecontent + r'<div><p>finish:' + finish.strftime(
         '%Y-%m-%d %X') + '</p></div>' + r'</body></html>'
     save_to_file(path + db.replace('fasta', 'html'), outputfilecontent)
+
 
